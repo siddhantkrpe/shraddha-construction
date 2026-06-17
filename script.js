@@ -2,10 +2,6 @@
    SHRADDHA CONSTRUCTION TRACKER — script.js
    ===================================================== */
 
-// ─── FIREBASE IMPORTS ─────────────────────────────────
-import { initializeApp }                        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get, child }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 // ─── USERS & ROLES ────────────────────────────────────
 const USERS = [
   { username: "goraksha karpe", password: "shraddhacnstr", role: "admin"  },
@@ -88,49 +84,32 @@ function setDateDisplay() {
   });
 }
 
-// ─── FIREBASE SETUP ───────────────────────────────────
-const firebaseConfig = {
-  apiKey:            "AIzaSyBE4x8ZFB1kye0ML1sGHE_efFPXf2Kc-go",
-  authDomain:        "shraddha-construction.firebaseapp.com",
-  databaseURL:       "https://shraddha-construction-default-rtdb.firebaseio.com",
-  projectId:         "shraddha-construction",
-  storageBucket:     "shraddha-construction.firebasestorage.app",
-  messagingSenderId: "42332440501",
-  appId:             "1:42332440501:web:bf3f260bdad57df5a27bfc",
-  measurementId:     "G-1ZMN6JXD1T"
-};
-
-const _fbApp = initializeApp(firebaseConfig);
-const _db    = getDatabase(_fbApp);
-const DB_REF = "sc_workplaces";
-
-// ─── STORAGE (Firebase Realtime Database) ─────────────
+// ─── STORAGE (Cloud via window.storage) ───────────────
 async function loadData() {
   try {
-    const snapshot = await get(child(ref(_db), DB_REF));
-    if (snapshot.exists()) {
-      workplaces = snapshot.val() || [];
+    const result = await window.storage.get(STORAGE_KEY, true);
+    if (result) {
+      workplaces = JSON.parse(result.value);
     } else {
       // One-time migration from localStorage
       const local = localStorage.getItem(STORAGE_KEY);
-      workplaces  = local ? JSON.parse(local) : [];
+      workplaces = local ? JSON.parse(local) : [];
       if (workplaces.length > 0) {
-        await set(ref(_db, DB_REF), workplaces);
+        await window.storage.set(STORAGE_KEY, JSON.stringify(workplaces), true);
         localStorage.removeItem(STORAGE_KEY);
       }
     }
-  } catch (err) {
-    console.error("Firebase load failed:", err);
+  } catch {
     workplaces = [];
   }
 }
 
 async function saveData() {
   try {
-    await set(ref(_db, DB_REF), workplaces);
+    await window.storage.set(STORAGE_KEY, JSON.stringify(workplaces), true);
   } catch (err) {
-    console.error("Firebase save failed:", err);
-    showToast("⚠️ Could not save to Firebase.", "error");
+    console.error("Cloud save failed:", err);
+    showToast("⚠️ Could not save to cloud.", "error");
   }
 }
 
@@ -1052,18 +1031,4 @@ document.addEventListener("keydown", e => {
     closeDeleteModal();
     closeSidebar();
   }
-});
-// ─── EXPOSE FUNCTIONS TO GLOBAL SCOPE (required for ES module) ────
-Object.assign(window, {
-  login, logout, togglePassword,
-  switchView, openCurrentWorkspace, openMainHeads, openWorkplace,
-  addWP, deleteWP,
-  addRec, editRecord, proceedDelete,
-  toggleRecordPanel, importExcel, downloadWorkspaceExcel,
-  startRecordSelection, confirmRecordSelection, cancelRecordSelection, toggleSelectRecord,
-  toggleSearch, clearSearch,
-  toggleSidebar, closeSidebar,
-  openImage, closeImage,
-  closeDeleteModal,
-  openHeadRecords,
 });
