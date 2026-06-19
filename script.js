@@ -36,9 +36,9 @@ function isAdmin()    { return currentRole === "admin"; }
 function can(feature) { return isAdmin() || !VIEWER_BLOCKED.has(feature); }
 
 // ─── INIT ─────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   setDateDisplay();
-  await loadData();
+  loadData();
 
   // Restore session
   if (sessionStorage.getItem(SESSION_KEY) === "1") {
@@ -84,33 +84,14 @@ function setDateDisplay() {
   });
 }
 
-// ─── STORAGE (Cloud via window.storage) ───────────────
-async function loadData() {
-  try {
-    const result = await window.storage.get(STORAGE_KEY, true);
-    if (result) {
-      workplaces = JSON.parse(result.value);
-    } else {
-      // One-time migration from localStorage
-      const local = localStorage.getItem(STORAGE_KEY);
-      workplaces = local ? JSON.parse(local) : [];
-      if (workplaces.length > 0) {
-        await window.storage.set(STORAGE_KEY, JSON.stringify(workplaces), true);
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-  } catch {
-    workplaces = [];
-  }
+// ─── STORAGE ──────────────────────────────────────────
+function loadData() {
+  try { workplaces = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { workplaces = []; }
 }
 
-async function saveData() {
-  try {
-    await window.storage.set(STORAGE_KEY, JSON.stringify(workplaces), true);
-  } catch (err) {
-    console.error("Cloud save failed:", err);
-    showToast("⚠️ Could not save to cloud.", "error");
-  }
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(workplaces));
 }
 
 // ─── AUTH ─────────────────────────────────────────────
@@ -353,7 +334,7 @@ function renderWorkplaceCards() {
 }
 
 // ─── WORKPLACE CRUD ───────────────────────────────────
-async function addWP() {
+function addWP() {
   if (!guardAdmin("addSite")) return;
 
   const input = document.getElementById("wpInput");
@@ -364,13 +345,13 @@ async function addWP() {
   if (exists) { showToast("A site with that name already exists.", "error"); return; }
 
   workplaces.push({ id: uid(), name, records: [] });
-  await saveData();
+  saveData();
   input.value = "";
   renderDashboard();
   showToast(`"${name}" site added ✓`, "success");
 }
 
-async function deleteWP(e, id) {
+function deleteWP(e, id) {
   e.stopPropagation();
   if (!guardAdmin("addSite")) return;
 
@@ -379,7 +360,7 @@ async function deleteWP(e, id) {
   if (!confirm(`Delete site "${wp.name}" and all its records? This cannot be undone.`)) return;
 
   workplaces = workplaces.filter(w => w.id !== id);
-  await saveData();
+  saveData();
   renderDashboard();
   showToast(`"${wp.name}" deleted.`);
 
@@ -432,7 +413,7 @@ function toggleRecordPanel() {
   }
 }
 
-async function addRec() {
+function addRec() {
 
   const amt  = document.getElementById("amt").value.trim();
   const date = document.getElementById("date").value;
@@ -452,7 +433,7 @@ async function addRec() {
 
   const photoFile = document.getElementById("photo").files[0];
 
-  const saveRecord = async (photoData) => {
+  const saveRecord = (photoData) => {
     wp.records.push({
       id:     uid(),
       amount: +amt,
@@ -464,7 +445,7 @@ async function addRec() {
       type:   document.getElementById("type").value,
       photo:  photoData || null,
     });
-    await saveData();
+    saveData();
     resetRecordForm();
     renderRecords();
     renderChart();
@@ -656,13 +637,13 @@ function closeDeleteModal() {
   pendingDeleteIds = [];
 }
 
-async function proceedDelete() {
+function proceedDelete() {
   if (!can("deleteRecord")) { showToast("Permission denied.", "error"); return; }
   const wp = workplaces.find(w => w.id === currentWPId);
   if (!wp) return;
   const count = pendingDeleteIds.length;
   wp.records = wp.records.filter(r => !pendingDeleteIds.includes(r.id));
-  await saveData();
+  saveData();
   closeDeleteModal();
   cancelRecordSelection();
   renderRecords();
@@ -671,7 +652,7 @@ async function proceedDelete() {
   showToast(`${count} record${count !== 1 ? "s" : ""} deleted.`);
 }
 
-async function editRecord(id) {
+function editRecord(id) {
   if (!isAdmin()) { showToast("Permission denied.", "error"); return; }
   const wp = workplaces.find(w => w.id === currentWPId);
   if (!wp) return;
@@ -687,7 +668,7 @@ async function editRecord(id) {
   document.getElementById("type").value   = r.type;
 
   wp.records = wp.records.filter(rec => rec.id !== id);
-  await saveData();
+  saveData();
 
   const card = document.getElementById("recordcard");
   card.classList.add("show");
@@ -887,7 +868,7 @@ function importExcel() {
   if (!wp) return;
 
   const reader = new FileReader();
-  reader.onload = async e => {
+  reader.onload = e => {
     try {
       const wb   = XLSX.read(e.target.result, { type: "array" });
       const ws   = wb.Sheets[wb.SheetNames[0]];
@@ -915,7 +896,7 @@ function importExcel() {
         imported++;
       });
 
-      await saveData();
+      saveData();
       renderRecords();
       renderChart();
       renderDashboard();
