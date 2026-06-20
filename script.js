@@ -39,10 +39,9 @@ function isAdmin()    { return currentRole === "admin"; }
 function can(feature) { return isAdmin() || !VIEWER_BLOCKED.has(feature); }
 
 // ─── INIT ─────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   setDateDisplay();
-  loadData();
-
+  await loadData();
   // Restore session
   if (sessionStorage.getItem(SESSION_KEY) === "1") {
     currentRole = sessionStorage.getItem(ROLE_KEY) || "admin";
