@@ -1,7 +1,10 @@
 /* =====================================================
    SHRADDHA CONSTRUCTION TRACKER — script.js
    ===================================================== */
-
+const supabaseClient = supabase.createClient(
+  "https://tylyculdznpumldzkexs.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5bHljdWxkem5wdW1sZHprZXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NTkyMTYsImV4cCI6MjA5NzQzNTIxNn0.Z19aAqWRmcIM81qgkfNnjHkdtVW-veRYa4TqO8NHlYE"
+);
 // ─── USERS & ROLES ────────────────────────────────────
 const USERS = [
   { username: "goraksha karpe", password: "shraddhacnstr", role: "admin"  },
@@ -85,15 +88,24 @@ function setDateDisplay() {
 }
 
 // ─── STORAGE ──────────────────────────────────────────
-function loadData() {
-  try { workplaces = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { workplaces = []; }
+async function loadData() {
+  const { data, error } = await supabaseClient.from('workplaces').select();
+  if (error) {
+    console.error(error);
+    workplaces = [];
+  } else {
+    workplaces = data || [];
+  }
 }
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(workplaces));
+async function saveData() {
+  // Clear the table, then write the current state fresh.
+  // Simple and reliable for an app this size — handles adds, edits, and deletes in one go.
+  await supabaseClient.from('workplaces').delete().neq('id', '');
+  if (workplaces.length > 0) {
+    await supabaseClient.from('workplaces').insert(workplaces);
+  }
 }
-
 // ─── AUTH ─────────────────────────────────────────────
 function login() {
   const btn      = document.getElementById("loginBtn");
