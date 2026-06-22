@@ -3,11 +3,11 @@
 ───────────────────────────────────────── */
 :root {
   --bg: #0f1720;
-  --panel: rgba(255, 255, 255, 0.88);
-  --panel-strong: rgba(255, 255, 255, 0.96);
-  --text: #000000;
-  --muted: #43618b;
-  --line: rgba(15, 23, 42, 0.12);
+  --panel: rgba(15, 60, 55, 0.72);
+  --panel-strong: rgba(15, 60, 55, 0.82);
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.65);
+  --line: rgba(255, 255, 255, 0.18);
   --accent: #0f766e;
   --accent-hover: #0d9488;
   --accent-strong: #115e59;
@@ -15,7 +15,7 @@
   --expense: #dc2626;
   --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.10);
   --shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
-  --shadow-lg: 0 28px 72px rgba(15, 75, 216, 0.28);
+  --shadow-lg: 0 28px 72px rgba(0, 0, 0, 0.40);
   --radius: 10px;
   --radius-sm: 7px;
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -39,9 +39,8 @@ body {
   font-size: 14px;
   line-height: 1.5;
   color: var(--text);
-  background:
-    linear-gradient(rgba(15, 23, 32, 0.32), rgba(15, 23, 32, 0.46)),
-    url("website-bg.avif") center / cover fixed;
+  background: #0f2a28;
+  position: relative;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -64,18 +63,38 @@ button {
 input, select {
   width: 100%;
   min-height: 44px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid rgba(255,255,255,0.22);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.95);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
   outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+input::placeholder, select::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.40);
+}
+
+textarea {
+  width: 100%;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+select option {
+  background: #0f4a44;
+  color: #ffffff;
 }
 
 input:focus, select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.28);
+  background: rgba(255,255,255,0.18);
 }
 
 input.invalid, select.invalid {
@@ -87,7 +106,7 @@ label {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--text);
+  color: rgba(255,255,255,0.85);
   text-transform: uppercase;
 }
 
@@ -104,11 +123,11 @@ label {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: #5eead4;
 }
 
 .muted {
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 14px;
 }
 
@@ -196,13 +215,13 @@ label {
 .ghost-btn {
   padding: 10px 14px;
   min-height: 42px;
-  color: var(--text);
-  background: var(--panel-strong);
-  border: 1.5px solid var(--line);
+  color: #ffffff;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
 }
 
 .ghost-btn:hover:not(:disabled) {
-  background: white;
+  background: rgba(255,255,255,0.20);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
@@ -256,9 +275,7 @@ label {
   display: grid;
   place-items: center;
   padding: 0;
-  background:
-    linear-gradient(rgba(15, 23, 32, 0.32), rgba(15, 23, 32, 0.46)),
-    url("website-bg.avif") center / cover fixed;
+
 }
 
 .login-split {
@@ -268,6 +285,7 @@ label {
   grid-template-columns: 1fr 1fr;
   border-radius: 18px;
   overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.18);
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
   animation: splitIn 0.5s ease;
   margin: 24px;
@@ -280,13 +298,33 @@ label {
 
 /* ── Left panel ── */
 .login-left {
-  background: linear-gradient(145deg, #0f766e 0%, #0d9488 40%, #14b8a6 80%, #0f766e 100%);
+  background: linear-gradient(135deg, #0f766e, #0d9488, #0369a1, #0f766e, #14b8a6, #0284c7);
+  background-size: 400% 400%;
+  animation: colorShift 6s ease infinite;
+  will-change: background-position;
   padding: 52px 44px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(135deg, #0f172a, #0f766e, #0369a1, #115e59, #0c4a6e, #0f766e, #0f172a);
+  background-size: 400% 400%;
+  animation: colorShift 12s ease infinite;
+  will-change: background-position;
+}
+
+@keyframes colorShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .login-left-content {
@@ -370,7 +408,7 @@ label {
 
 /* ── Right panel ── */
 .login-right {
-  background: #ffffff;
+  background: rgba(15, 50, 48, 0.70);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,7 +425,7 @@ label {
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  color: #0f1720;
+  color: #ffffff;
 }
 
 .form-stack {
@@ -445,6 +483,7 @@ label {
 ───────────────────────────────────────── */
 .app-shell {
   min-height: 100vh;
+  background: transparent;
   display: grid;
   grid-template-columns: 268px minmax(0, 1fr);
 }
@@ -463,9 +502,7 @@ label {
   gap: 20px;
   padding: 24px 18px;
   color: white;
-  background:
-    linear-gradient(rgba(8, 18, 28, 0.88), rgba(8, 18, 28, 0.94)),
-    url("header-bg.avif") center / cover;
+  background: rgba(10, 30, 28, 0.75);
 }
 
 .sidebar-brand {
@@ -591,7 +628,7 @@ label {
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(10px);
+  color: #0f1720;
 }
 
 .mobile-title {
@@ -612,8 +649,7 @@ label {
   position: fixed;
   inset: 0;
   z-index: 99;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(2px);
+  background: rgba(0,0,0,0.60);
 }
 
 /* ─────────────────────────────────────────
@@ -639,9 +675,7 @@ label {
   padding: 28px 32px;
   border-radius: var(--radius);
   color: white;
-  background:
-    linear-gradient(120deg, rgba(8, 18, 28, 0.84) 0%, rgba(8, 18, 28, 0.38) 100%),
-    url("header-bg.avif") center / cover;
+  background: linear-gradient(120deg, #0a4f4a 0%, #0369a1 100%);
   box-shadow: var(--shadow);
   flex-shrink: 0;
 }
@@ -667,7 +701,7 @@ label {
 }
 
 .hero-logout:hover {
-  background: rgba(255,255,255,0.22) !important;
+  background: rgba(255,255,255,0.15) !important;
   color: white;
 }
 
@@ -717,10 +751,10 @@ label {
 .summary-card {
   padding: 18px 20px;
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(15, 60, 55, 0.72);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
+  will-change: transform;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
@@ -731,7 +765,7 @@ label {
 
 .summary-card span {
   display: block;
-  color: var(--muted);
+  color: rgba(255,255,255,0.60);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -762,11 +796,11 @@ label {
   min-height: 144px;
   padding: 18px;
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(15, 60, 55, 0.72);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
   text-align: left;
+  will-change: transform;
   transition: transform var(--transition), box-shadow var(--transition);
   cursor: pointer;
 }
@@ -828,13 +862,13 @@ label {
   min-height: 42px;
   border-radius: var(--radius-sm);
   border: 1.5px dashed var(--line);
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.10);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
-  color: var(--muted);
+  color: rgba(255,255,255,0.65);
   transition: border-color var(--transition), color var(--transition);
   white-space: nowrap;
 }
@@ -854,10 +888,9 @@ label {
   padding: 16px;
   margin-bottom: 14px;
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(15, 60, 55, 0.72);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
   /* Slide animation */
   overflow: hidden;
   max-height: 0;
@@ -895,10 +928,9 @@ label {
   padding: 20px;
   margin-bottom: 14px;
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(15, 60, 55, 0.72);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
 }
 
 .record-submit {
@@ -932,10 +964,9 @@ label {
 ───────────────────────────────────────── */
 .panel {
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(15, 60, 55, 0.72);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
 }
 
 .table-panel {
@@ -991,9 +1022,10 @@ th {
 
 td {
   padding: 12px 8px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   vertical-align: middle;
   font-size: 13px;
+  color: rgba(255,255,255,0.90);
   line-height: 1.4;
   overflow-wrap: anywhere;
   word-break: normal;
@@ -1001,7 +1033,7 @@ td {
 }
 
 tr:hover td {
-  background: rgba(15, 118, 110, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 tr:last-child td {
@@ -1034,7 +1066,7 @@ tr:last-child td {
 }
 
 .selected-row td {
-  background: rgba(15, 118, 110, 0.09) !important;
+  background: rgba(20, 184, 166, 0.18) !important;
 }
 
 /* ─────────────────────────────────────────
@@ -1135,7 +1167,6 @@ canvas {
   place-items: center;
   padding: 24px;
   background: rgba(2, 6, 23, 0.86);
-  backdrop-filter: blur(6px);
   animation: fadeIn 0.2s ease;
 }
 
@@ -1162,8 +1193,8 @@ canvas {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: white;
-  color: var(--text);
+  background: rgba(255,255,255,0.18);
+  color: #fff;
   font-size: 14px;
   font-weight: 800;
   box-shadow: var(--shadow-sm);
@@ -1185,7 +1216,6 @@ canvas {
   place-items: center;
   padding: 24px;
   background: rgba(2, 6, 23, 0.72);
-  backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease;
 }
 
@@ -1193,7 +1223,8 @@ canvas {
   width: min(380px, 100%);
   padding: 28px;
   border-radius: var(--radius);
-  background: white;
+  background: rgba(15, 40, 55, 0.85);
+  border: 1px solid rgba(255,255,255,0.18);
   box-shadow: var(--shadow-lg);
   animation: slideUp 0.22s ease;
 }
