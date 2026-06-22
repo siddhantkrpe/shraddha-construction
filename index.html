@@ -20,23 +20,48 @@
 
   <!-- Login Page -->
   <main id="loginPage" class="login-shell">
-    <section class="login-card" aria-labelledby="loginTitle">
-      <div class="login-logo">🏗️</div>
-      <p class="eyebrow">Project Accounts</p>
-      <h1 id="loginTitle">Shraddha Construction</h1>
-      <p class="muted">Track site income, expenses, payment modes, documents, and heads — all in one clean workspace.</p>
-      <div class="form-stack">
-        <label for="username">Username</label>
-        <input id="username" autocomplete="username" placeholder="admin" required>
-        <label for="password">Password</label>
-        <div class="password-wrap">
-          <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
-          <button type="button" class="toggle-pw" onclick="togglePassword()" aria-label="Show password">👁</button>
+    <div class="login-split">
+
+      <!-- Left Panel -->
+      <div class="login-left">
+        <div class="login-left-content">
+          <div class="login-brand-icon">🏗️</div>
+          <h1 class="login-brand-title">Shraddha Construction</h1>
+          <p class="login-brand-sub">Your complete project finance workspace — track income, expenses, payment modes, documents, and heads, all in one place.</p>
+          <div class="login-features">
+            <div class="login-feature"><span class="login-feature-dot"></span>Real-time expense tracking</div>
+            <div class="login-feature"><span class="login-feature-dot"></span>Multi-site management</div>
+            <div class="login-feature"><span class="login-feature-dot"></span>Document & payment records</div>
+          </div>
         </div>
-        <p id="loginError" class="field-error" style="display:none;">Incorrect username or password.</p>
-        <button class="primary-btn login-btn" id="loginBtn" onclick="login()">Sign In</button>
+        <div class="login-left-circles">
+          <div class="lc lc1"></div>
+          <div class="lc lc2"></div>
+          <div class="lc lc3"></div>
+        </div>
       </div>
-    </section>
+
+      <!-- Right Panel -->
+      <div class="login-right">
+        <section class="login-card" aria-labelledby="loginTitle">
+          <p class="eyebrow">Welcome back</p>
+          <h2 id="loginTitle">Sign in to your account</h2>
+          <p class="muted" style="margin-bottom: 28px;">Enter your credentials to continue</p>
+          <div class="form-stack">
+            <label for="username">Username</label>
+            <input id="username" autocomplete="username" placeholder="admin" required>
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+              <button type="button" class="toggle-pw" onclick="togglePassword()" aria-label="Show password">👁</button>
+            </div>
+            <p id="loginError" class="field-error" style="display:none;">Incorrect username or password.</p>
+            <button class="primary-btn login-btn" id="loginBtn" onclick="login()">Sign In</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
   </main>
 
   <!-- App Shell -->
@@ -316,7 +341,7 @@
 
   <!-- Sidebar overlay for mobile -->
   <div id="sidebarOverlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
-   <script src="node.js"></script>
+
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="script.js"></script>
 </body>
