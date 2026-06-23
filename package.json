@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Shraddha Construction finance tracker",
-  "packageManager": "npm@11",
+  "packageManager": "npm@11.13.0",
   "scripts": {
     "start": "npx serve .",
     "dev": "npx live-server --port=5173",
@@ -12,6 +12,10 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "serve": "^14.2.0"
   },
   "engines": {
     "node": ">=20.0.0"
