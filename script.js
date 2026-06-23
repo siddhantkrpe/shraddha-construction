@@ -1061,25 +1061,34 @@ async function saveRAData(bill, action = 'insert') {
   const row = {
     id:         bill.id,
     date:       bill.date,
-    site:       bill.site,
-    bill_no:    bill.billNo,
-    work:       bill.work,
-    remark:     bill.remark,
-    sanctioned: bill.sanctioned,
-    gst:        bill.gst,
-    cgst:       bill.cgst,
-    it:         bill.it,
-    net:        bill.net,
+    site:       bill.site || null,
+    bill_no:    bill.billNo || null,
+    work:       bill.work || null,
+    remark:     bill.remark || null,
+    sanctioned: Number(bill.sanctioned) || 0,
+    gst:        Number(bill.gst) || 0,
+    cgst:       Number(bill.cgst) || 0,
+    it:         Number(bill.it) || 0,
+    net:        Number(bill.net) || 0,
     photo:      bill.photo || null,
     created_at: bill.createdAt,
   };
 
   if (action === 'insert') {
     const { error } = await supabaseClient.from('ra_bills').insert(row);
-    if (error) { console.error('RA insert error:', error); showToast('Save failed. Check console.', 'error'); return false; }
+    if (error) {
+      console.error('RA insert error — full details:', JSON.stringify(error, null, 2));
+      const msg = error.message || error.details || 'Unknown error';
+      showToast(`Save failed: ${msg}`, 'error');
+      return false;
+    }
   } else if (action === 'delete') {
     const { error } = await supabaseClient.from('ra_bills').delete().eq('id', bill.id);
-    if (error) { console.error('RA delete error:', error); showToast('Delete failed. Check console.', 'error'); return false; }
+    if (error) {
+      console.error('RA delete error — full details:', JSON.stringify(error, null, 2));
+      showToast(`Delete failed: ${error.message || 'Unknown error'}`, 'error');
+      return false;
+    }
   }
   return true;
 }
