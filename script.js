@@ -41,7 +41,7 @@ function can(feature) { return isAdmin() || !VIEWER_BLOCKED.has(feature); }
 // ─── INIT ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
   setDateDisplay();
-  await loadData();
+  await Promise.all([loadData(), loadRAData()]);
   // Restore session
   if (sessionStorage.getItem(SESSION_KEY) === "1") {
     currentRole = sessionStorage.getItem(ROLE_KEY) || "admin";
@@ -1028,12 +1028,60 @@ document.addEventListener("keydown", e => {
 // ═══════════════════════════════════════════════════════
 //   RA BILLS
 // ═══════════════════════════════════════════════════════
-const RA_KEY = "sc_ra_bills";
+let raBills = [];
 
-let raBills = JSON.parse(localStorage.getItem(RA_KEY) || "[]");
+async function loadRAData() {
+  const { data, error } = await supabaseClient.from('ra_bills').select();
+  if (error) {
+    console.error('RA Bills load error:', error);
+    raBills = [];
+  } else {
+    // Map snake_case DB columns back to camelCase used in the app
+    raBills = (data || []).map(b => ({
+      id:         b.id,
+      date:       b.date,
+      site:       b.site,
+      billNo:     b.bill_no,
+      work:       b.work,
+      remark:     b.remark,
+      sanctioned: b.sanctioned,
+      gst:        b.gst,
+      cgst:       b.cgst,
+      it:         b.it,
+      net:        b.net,
+      photo:      b.photo,
+      createdAt:  b.created_at,
+    }));
+    // Sort newest first
+    raBills.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  }
+}
 
-function saveRAData() {
-  localStorage.setItem(RA_KEY, JSON.stringify(raBills));
+async function saveRAData(bill, action = 'insert') {
+  const row = {
+    id:         bill.id,
+    date:       bill.date,
+    site:       bill.site,
+    bill_no:    bill.billNo,
+    work:       bill.work,
+    remark:     bill.remark,
+    sanctioned: bill.sanctioned,
+    gst:        bill.gst,
+    cgst:       bill.cgst,
+    it:         bill.it,
+    net:        bill.net,
+    photo:      bill.photo || null,
+    created_at: bill.createdAt,
+  };
+
+  if (action === 'insert') {
+    const { error } = await supabaseClient.from('ra_bills').insert(row);
+    if (error) { console.error('RA insert error:', error); showToast('Save failed. Check console.', 'error'); return false; }
+  } else if (action === 'delete') {
+    const { error } = await supabaseClient.from('ra_bills').delete().eq('id', bill.id);
+    if (error) { console.error('RA delete error:', error); showToast('Delete failed. Check console.', 'error'); return false; }
+  }
+  return true;
 }
 
 // ── Populate site dropdown from workplaces ─────────────
@@ -1119,7 +1167,7 @@ function calcRA() {
 }
 
 // ── Save bill ─────────────────────────────────────────
-function saveRABill() {
+async function saveRABill() {
   const site       = document.getElementById("raSite").value.trim();
   const date       = document.getElementById("raDate").value;
   const billNo     = document.getElementById("raBillNo").value.trim();
@@ -1135,14 +1183,23 @@ function saveRABill() {
   const it    = sanctioned * 0.04;
   const net   = sanctioned - gst - cgst - it;
 
-  raBills.unshift({
+  const btn = document.getElementById("raSaveBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+
+  const bill = {
     id: uid(), date, site, billNo, work, remark,
     sanctioned, gst, cgst, it, net,
     photo: raPhotoData || null,
     createdAt: new Date().toISOString()
-  });
+  };
 
-  saveRAData();
+  const ok = await saveRAData(bill, 'insert');
+  if (!ok) {
+    if (btn) { btn.disabled = false; btn.textContent = "💾 Save RA Bill"; }
+    return;
+  }
+
+  raBills.unshift(bill);
   renderRABills();
   showToast("RA Bill saved ✓", "success");
 
@@ -1155,13 +1212,17 @@ function saveRABill() {
   calcRA();
   removeRAPhoto();
   document.getElementById("raCard").style.display = "none";
+  if (btn) { btn.disabled = false; btn.textContent = "💾 Save RA Bill"; }
 }
 
 // ── Delete bill ───────────────────────────────────────
-function deleteRABill(id) {
+async function deleteRABill(id) {
   if (!confirm("Delete this RA Bill? This cannot be undone.")) return;
+  const bill = raBills.find(b => b.id === id);
+  if (!bill) return;
+  const ok = await saveRAData(bill, 'delete');
+  if (!ok) return;
   raBills = raBills.filter(b => b.id !== id);
-  saveRAData();
   renderRABills();
   showToast("RA Bill deleted.");
 }
@@ -1222,6 +1283,6 @@ switchView = function(viewId) {
   _origSwitchView(viewId);
   if (viewId === "raBillsView") {
     populateRASiteDropdown();
-    renderRABills();
+    loadRAData().then(() => renderRABills());
   }
 };
