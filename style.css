@@ -1421,3 +1421,180 @@ canvas {
   letter-spacing: -0.02em;
   background-color: #6c0aeb;
 }
+
+/* ═══════════════════════════════════════════════════════
+   RA BILLS
+═══════════════════════════════════════════════════════ */
+
+.ra-card {
+  padding: 28px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.20);
+  animation: slideUp 0.25s ease;
+}
+
+.ra-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ra-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.ra-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Breakdown box ── */
+.ra-breakdown {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  margin-bottom: 4px;
+}
+
+.ra-breakdown-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 14px;
+}
+
+.ra-breakdown-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ra-deduct-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.80);
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.ra-deduct-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ra-deduct-row strong {
+  font-weight: 700;
+  color: #f87171;
+}
+
+.ra-rate {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-left: 4px;
+}
+
+.ra-total-deduct {
+  border-top: 1px solid rgba(255,255,255,0.18) !important;
+  padding-top: 9px;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+.ra-total-deduct strong {
+  color: #f87171;
+}
+
+.ra-net-row {
+  background: rgba(20,184,166,0.12);
+  border-radius: 7px;
+  padding: 11px 14px !important;
+  border: 1px solid rgba(20,184,166,0.25) !important;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.ra-net-row strong {
+  color: #4ade80 !important;
+  font-size: 17px;
+}
+
+.ra-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Net column highlight in table */
+.ra-net-cell {
+  color: #4ade80 !important;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .ra-form-grid { grid-template-columns: 1fr; }
+  .ra-form-actions { flex-direction: column; }
+}
+
+/* ── RA Photo upload ── */
+.ra-file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  border: 1.5px dashed rgba(255,255,255,0.28);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  background: rgba(255,255,255,0.06);
+}
+.ra-file-label:hover {
+  border-color: rgba(20,184,166,0.5);
+  color: #5eead4;
+  background: rgba(20,184,166,0.08);
+}
+
+.ra-photo-preview {
+  position: relative;
+  margin-top: 12px;
+  display: inline-block;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1.5px solid rgba(20,184,166,0.35);
+}
+.ra-photo-preview img {
+  display: block;
+  max-height: 160px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+.ra-remove-photo {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(15,23,32,0.80);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.ra-remove-photo:hover { background: var(--expense); }

@@ -1024,3 +1024,204 @@ document.addEventListener("keydown", e => {
     closeSidebar();
   }
 });
+
+// ═══════════════════════════════════════════════════════
+//   RA BILLS
+// ═══════════════════════════════════════════════════════
+const RA_KEY = "sc_ra_bills";
+
+let raBills = JSON.parse(localStorage.getItem(RA_KEY) || "[]");
+
+function saveRAData() {
+  localStorage.setItem(RA_KEY, JSON.stringify(raBills));
+}
+
+// ── Populate site dropdown from workplaces ─────────────
+function populateRASiteDropdown() {
+  const sel = document.getElementById("raSite");
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Select site —</option>' +
+    workplaces.map(wp => `<option value="${escHtml(wp.name)}"${wp.name === current ? " selected" : ""}>${escHtml(wp.name)}</option>`).join("");
+}
+
+// ── Toggle form ────────────────────────────────────────
+// ── Photo state ───────────────────────────────────────
+let raPhotoData = null; // base64 string
+
+function handleRAPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const isPDF = file.type === "application/pdf";
+  const label = document.getElementById("raFileLabel");
+  const icon  = document.getElementById("raFileIcon");
+  const name  = document.getElementById("raFileName");
+  const preview = document.getElementById("raPhotoPreview");
+  const img     = document.getElementById("raPhotoImg");
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    raPhotoData = e.target.result;
+    icon.textContent = isPDF ? "📄" : "🖼️";
+    name.textContent = file.name;
+    label.style.borderColor = "rgba(20,184,166,0.6)";
+    label.style.color = "#5eead4";
+
+    if (!isPDF) {
+      img.src = raPhotoData;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none"; // PDFs: no image preview, just name shown
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeRAPhoto() {
+  raPhotoData = null;
+  document.getElementById("raPhoto").value = "";
+  document.getElementById("raFileIcon").textContent = "📎";
+  document.getElementById("raFileName").textContent = "Click to attach image or PDF";
+  const label = document.getElementById("raFileLabel");
+  label.style.borderColor = "";
+  label.style.color = "";
+  document.getElementById("raPhotoPreview").style.display = "none";
+  document.getElementById("raPhotoImg").src = "";
+}
+
+function toggleRAForm() {
+  const card = document.getElementById("raCard");
+  const open = card.style.display === "none" || card.style.display === "";
+  card.style.display = open ? "block" : "none";
+  if (open) {
+    populateRASiteDropdown();
+    document.getElementById("raDate").value = todayISO();
+    calcRA();
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+// ── Live calculation ───────────────────────────────────
+function calcRA() {
+  const sanctioned = parseFloat(document.getElementById("raSanctioned").value) || 0;
+  const gst        = sanctioned * 0.01;
+  const cgst       = sanctioned * 0.01;
+  const it         = sanctioned * 0.04;
+  const totalDeduct = gst + cgst + it;
+  const net        = sanctioned - totalDeduct;
+
+  document.getElementById("raGST").textContent         = fmt(gst);
+  document.getElementById("raCGST").textContent        = fmt(cgst);
+  document.getElementById("raIT").textContent          = fmt(it);
+  document.getElementById("raTotalDeduct").textContent = fmt(totalDeduct);
+  document.getElementById("raNet").textContent         = fmt(net);
+}
+
+// ── Save bill ─────────────────────────────────────────
+function saveRABill() {
+  const site       = document.getElementById("raSite").value.trim();
+  const date       = document.getElementById("raDate").value;
+  const billNo     = document.getElementById("raBillNo").value.trim();
+  const work       = document.getElementById("raWork").value.trim();
+  const remark     = document.getElementById("raRemark").value.trim();
+  const sanctioned = parseFloat(document.getElementById("raSanctioned").value) || 0;
+
+  if (!date)       { showToast("Please pick a date.", "error"); return; }
+  if (!sanctioned) { showToast("Enter the sanctioned amount.", "error"); return; }
+
+  const gst   = sanctioned * 0.01;
+  const cgst  = sanctioned * 0.01;
+  const it    = sanctioned * 0.04;
+  const net   = sanctioned - gst - cgst - it;
+
+  raBills.unshift({
+    id: uid(), date, site, billNo, work, remark,
+    sanctioned, gst, cgst, it, net,
+    photo: raPhotoData || null,
+    createdAt: new Date().toISOString()
+  });
+
+  saveRAData();
+  renderRABills();
+  showToast("RA Bill saved ✓", "success");
+
+  // Reset form
+  ["raSite","raBillNo","raWork","raRemark","raSanctioned"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  document.getElementById("raDate").value = todayISO();
+  calcRA();
+  removeRAPhoto();
+  document.getElementById("raCard").style.display = "none";
+}
+
+// ── Delete bill ───────────────────────────────────────
+function deleteRABill(id) {
+  if (!confirm("Delete this RA Bill? This cannot be undone.")) return;
+  raBills = raBills.filter(b => b.id !== id);
+  saveRAData();
+  renderRABills();
+  showToast("RA Bill deleted.");
+}
+
+// ── View attached photo (reuses existing image modal) ──
+function viewRAPhoto(src) {
+  const modal = document.getElementById("imageModal");
+  const img   = document.getElementById("modalImage");
+  if (!modal || !img) return;
+  img.src = src;
+  modal.classList.remove("hidden");
+}
+
+// ── Render list ───────────────────────────────────────
+function renderRABills() {
+  const tbody  = document.getElementById("raBillsBody");
+  const empty  = document.getElementById("raBillsEmpty");
+  const table  = document.getElementById("raBillsTable");
+  const count  = document.getElementById("raBillCount");
+  if (!tbody) return;
+
+  count.textContent = `${raBills.length} bill${raBills.length !== 1 ? "s" : ""}`;
+
+  if (raBills.length === 0) {
+    table.style.display = "none";
+    empty.style.display = "flex";
+    return;
+  }
+
+  table.style.display = "";
+  empty.style.display = "none";
+
+  tbody.innerHTML = raBills.map(b => {
+    const photoCell = b.photo
+      ? `<td><button class="ghost-btn" style="padding:4px 8px;font-size:12px;min-height:unset;" onclick="viewRAPhoto('${b.photo}')">🖼️ View</button></td>`
+      : `<td style="color:rgba(255,255,255,0.3);font-size:12px;">—</td>`;
+    return `
+    <tr>
+      <td>${formatDate(b.date)}</td>
+      <td>${escHtml(b.billNo || "—")}</td>
+      <td>${escHtml(b.site || "—")}</td>
+      <td>${escHtml(b.work || "—")}</td>
+      <td class="money">${fmt(b.sanctioned)}</td>
+      <td class="money">${fmt(b.gst)}</td>
+      <td class="money">${fmt(b.cgst)}</td>
+      <td class="money">${fmt(b.it)}</td>
+      <td class="money ra-net-cell">${fmt(b.net)}</td>
+      <td>${escHtml(b.remark || "—")}</td>
+      ${photoCell}
+      <td><button class="danger-btn icon-btn" style="padding:4px 8px;font-size:12px;" onclick="deleteRABill('${b.id}')">🗑</button></td>
+    </tr>`;
+  }).join("");
+}
+
+// ── Hook into switchView to render when opening ────────
+const _origSwitchView = switchView;
+switchView = function(viewId) {
+  _origSwitchView(viewId);
+  if (viewId === "raBillsView") {
+    populateRASiteDropdown();
+    renderRABills();
+  }
+};

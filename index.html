@@ -86,6 +86,9 @@
         <button onclick="openMainHeads()" data-view-btn="mainHeadsView" class="nav-btn">
           <span class="nav-icon">🗂️</span> Main Heads
         </button>
+        <button onclick="switchView('raBillsView')" data-view-btn="raBillsView" class="nav-btn">
+          <span class="nav-icon">🧾</span> RA Bills
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -288,6 +291,144 @@
           </div>
         </div>
         <div id="mainHeads" class="site-grid"></div>
+      </section>
+
+      <!-- ── RA BILLS ── -->
+      <section id="raBillsView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Government Bills</p>
+            <h2>RA Bills</h2>
+          </div>
+          <button class="primary-btn" onclick="toggleRAForm()">+ New RA Bill</button>
+        </div>
+
+        <!-- RA Bill Form -->
+        <div id="raCard" class="panel ra-card" style="display:none;">
+          <div class="ra-card-header">
+            <span class="eyebrow">New RA Bill</span>
+            <button class="text-btn" onclick="toggleRAForm()">✕ Close</button>
+          </div>
+
+          <div class="ra-form-grid">
+            <!-- Site name -->
+            <div class="form-field">
+              <label for="raSite">Site Name *</label>
+              <select id="raSite">
+                <option value="">— Select site —</option>
+              </select>
+            </div>
+            <!-- Bill date -->
+            <div class="form-field">
+              <label for="raDate">Bill Date *</label>
+              <input type="date" id="raDate">
+            </div>
+            <!-- Bill number -->
+            <div class="form-field">
+              <label for="raBillNo">Bill No. / RA No.</label>
+              <input id="raBillNo" placeholder="e.g. RA-2024-01">
+            </div>
+            <!-- Work description -->
+            <div class="form-field">
+              <label for="raWork">Work Description</label>
+              <input id="raWork" placeholder="e.g. Foundation concreting">
+            </div>
+            <!-- Sanctioned amount -->
+            <div class="form-field ra-full">
+              <label for="raSanctioned">Amount Sanctioned by Government (₹) *</label>
+              <input type="number" id="raSanctioned" min="0" step="0.01" placeholder="0.00" oninput="calcRA()">
+            </div>
+          </div>
+
+          <!-- Live deduction breakdown -->
+          <div class="ra-breakdown">
+            <div class="ra-breakdown-title">Deduction Breakdown</div>
+            <div class="ra-breakdown-grid">
+              <div class="ra-deduct-row">
+                <span>GST <span class="ra-rate">(1%)</span></span>
+                <strong id="raGST">₹0</strong>
+              </div>
+              <div class="ra-deduct-row">
+                <span>CGST <span class="ra-rate">(1%)</span></span>
+                <strong id="raCGST">₹0</strong>
+              </div>
+              <div class="ra-deduct-row">
+                <span>Income Tax <span class="ra-rate">(4%)</span></span>
+                <strong id="raIT">₹0</strong>
+              </div>
+              <div class="ra-deduct-row ra-total-deduct">
+                <span>Total Deductions</span>
+                <strong id="raTotalDeduct">₹0</strong>
+              </div>
+              <div class="ra-deduct-row ra-net-row">
+                <span>💰 Net Amount Receivable</span>
+                <strong id="raNet">₹0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Remark + Photo -->
+          <div class="ra-form-grid" style="margin-top:16px;">
+            <div class="form-field">
+              <label for="raRemark">Remark / Notes</label>
+              <input id="raRemark" placeholder="Any additional remarks (optional)">
+            </div>
+            <div class="form-field">
+              <label>Attach Bill / Photo</label>
+              <label for="raPhoto" class="ra-file-label" id="raFileLabel">
+                <span id="raFileIcon">📎</span>
+                <span id="raFileName">Click to attach image or PDF</span>
+              </label>
+              <input type="file" id="raPhoto" accept="image/*,application/pdf" style="display:none" onchange="handleRAPhoto(this)">
+            </div>
+          </div>
+
+          <!-- Image preview -->
+          <div id="raPhotoPreview" class="ra-photo-preview" style="display:none;">
+            <img id="raPhotoImg" alt="Bill preview">
+            <button class="ra-remove-photo" onclick="removeRAPhoto()" title="Remove photo">✕</button>
+          </div>
+
+          <div class="ra-form-actions">
+            <button class="primary-btn" onclick="saveRABill()">💾 Save RA Bill</button>
+            <button class="ghost-btn" onclick="toggleRAForm()">Cancel</button>
+          </div>
+        </div>
+
+        <!-- RA Bills List -->
+        <div class="panel table-panel" id="raBillsTableWrap">
+          <div class="table-head">
+            <div>
+              <h3>All RA Bills</h3>
+              <p id="raBillCount" class="muted-sm"></p>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="records-table" id="raBillsTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Bill No.</th>
+                  <th>Site</th>
+                  <th>Work</th>
+                  <th>Sanctioned</th>
+                  <th>GST (1%)</th>
+                  <th>CGST (1%)</th>
+                  <th>IT (4%)</th>
+                  <th>Net Receivable</th>
+                  <th>Remark</th>
+                  <th>Doc</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="raBillsBody"></tbody>
+            </table>
+          </div>
+          <div id="raBillsEmpty" class="empty-state" style="display:none;">
+            <span class="empty-state-icon">🧾</span>
+            No RA bills yet. Click <strong>+ New RA Bill</strong> to add one.
+          </div>
+        </div>
       </section>
 
       <!-- ── HEAD RECORDS ── -->
