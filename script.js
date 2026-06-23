@@ -1186,6 +1186,7 @@ async function saveRABill() {
 
   if (!date)       { showToast("Please pick a date.", "error"); return; }
   if (!sanctioned) { showToast("Enter the sanctioned amount.", "error"); return; }
+  if (!site)       { showToast("Please select a site.", "error"); return; }
 
   const gst   = sanctioned * 0.01;
   const cgst  = sanctioned * 0.01;
@@ -1202,15 +1203,44 @@ async function saveRABill() {
     createdAt: new Date().toISOString()
   };
 
+  // ── Save RA bill to Supabase ──
   const ok = await saveRAData(bill, 'insert');
   if (!ok) {
     if (btn) { btn.disabled = false; btn.textContent = "💾 Save RA Bill"; }
     return;
   }
-
   raBills.unshift(bill);
+
+  // ── Also add as an income record in the matching workplace ──
+  const wp = workplaces.find(w => w.name.toLowerCase() === site.toLowerCase());
+  if (wp) {
+    const noteText = [
+      billNo ? `Bill No: ${billNo}` : '',
+      work   ? work                 : '',
+      remark ? remark               : '',
+      `(RA Bill — Net after GST/CGST/IT deductions)`
+    ].filter(Boolean).join(' | ');
+
+    wp.records.push({
+      id:     uid(),
+      amount: net,
+      date,
+      head:   'RA Bill',
+      note:   billNo ? `${billNo}` : 'RA Bill',
+      medium: 'Net Banking',
+      bank:   'SBI',
+      type:   'income',
+      photo:  raPhotoData || null,
+    });
+
+    await saveData();
+    renderDashboard();
+    showToast(`RA Bill saved & added to "${wp.name}" as income ✓`, "success");
+  } else {
+    showToast("RA Bill saved ✓  (site not found — record not auto-added)", "success");
+  }
+
   renderRABills();
-  showToast("RA Bill saved ✓", "success");
 
   // Reset form
   ["raSite","raBillNo","raWork","raRemark","raSanctioned"].forEach(id => {
