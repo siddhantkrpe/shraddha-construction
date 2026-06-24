@@ -1,17 +1,17 @@
-/* =====================================================
+﻿/* =====================================================
    SHRADDHA CONSTRUCTION TRACKER — script.js
    ===================================================== */
 const supabaseClient = supabase.createClient(
   "https://tylyculdznpumldzkexs.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5bHljdWxkem5wdW1sZHprZXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NTkyMTYsImV4cCI6MjA5NzQzNTIxNn0.Z19aAqWRmcIM81qgkfNnjHkdtVW-veRYa4TqO8NHlYE"
 );
-// ─── USERS & ROLES ────────────────────────────────────
-const USERS = [
-  { username: "goraksha karpe", password: "shraddhacnstr", role: "admin"  },
-  { username: "ude onkar",  password: "123456789",  role: "viewer" },
-];
+// --- AUTH & ROLES -------------------------------------
+// Auth state is managed by Supabase. User roles stored in user_metadata.role
+const ADMIN_EMAIL = "admin@shraddhavastu.com"; // Predefined admin email
+const ADMIN_PASSWORD = "Admin@Shraddha2024!"; // Predefined admin password
 
 // Features the viewer role CANNOT access
+
 const VIEWER_BLOCKED = new Set([
   "addSite",      // add / delete sites
   "deleteRecord", // delete records
@@ -106,43 +106,38 @@ async function saveData() {
   }
 }
 // ─── AUTH ─────────────────────────────────────────────
-function login() {
+async function login() {
   const btn      = document.getElementById("loginBtn");
   const errEl    = document.getElementById("loginError");
-  const username = document.getElementById("username").value.trim().toLowerCase();
+  const email    = document.getElementById("username").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
 
   errEl.style.display = "none";
+  btn.textContent = "Signing in�";
+  btn.disabled    = true;
 
-  const matched = USERS.find(u => u.username === username && u.password === password);
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
 
-  if (matched) {
-    btn.textContent = "Signing in…";
-    btn.disabled    = true;
-    setTimeout(() => {
-      sessionStorage.setItem(SESSION_KEY, "1");
-      sessionStorage.setItem(ROLE_KEY, matched.role);
-      currentRole = matched.role;
-      showApp();
-      btn.textContent = "Sign In";
-      btn.disabled    = false;
-    }, 420);
-  } else {
+    if (error) throw error;
+    // auth state change listener will handle setting session and showing app
+  } catch (error) {
+    errEl.textContent = "Invalid email or password.";
     errEl.style.display = "block";
     document.getElementById("password").value = "";
     document.getElementById("password").focus();
     shake(document.querySelector(".login-card"));
+    btn.textContent = "Sign In";
+    btn.disabled    = false;
   }
 }
 
-function logout() {
-  sessionStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem(ROLE_KEY);
-  currentRole = "admin";
-  document.getElementById("app").classList.add("hidden");
-  document.getElementById("loginPage").style.display = "";
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
+async function logout() {
+  await supabaseClient.auth.signOut();
+  // auth state change listener will handle cleanup
 }
 
 function showApp() {
