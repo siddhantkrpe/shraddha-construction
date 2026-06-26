@@ -1,489 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shraddha Construction Tracker</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
-  <script src="https://cdn.tailwindcss.com/"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shraddha Construction Tracker</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
+    <!-- #25: Tailwind moved to just before </head> to be non-blocking -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- #25: Tailwind CDN just before </head> -->
+    <script src="https://cdn.tailwindcss.com/"></script>
 </head>
+
 <body>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- Login Page -->
-  <main id="loginPage" class="login-shell">
-    <div class="login-split">
+    <!-- Login Page -->
+    <main id="loginPage" class="login-shell">
+        <div class="login-split">
 
-      <!-- Left Panel -->
-      <div class="login-left">
-        <div class="login-left-content">
-          <div class="login-brand-icon">🏗️</div>
-          <h1 class="login-brand-title">Shraddha Construction</h1>
-          <p class="login-brand-sub">Your complete project finance workspace — track income, expenses, payment modes, documents, and heads, all in one place.</p>
-          <div class="login-features">
-            <div class="login-feature"><span class="login-feature-dot"></span>Real-time expense tracking</div>
-            <div class="login-feature"><span class="login-feature-dot"></span>Multi-site management</div>
-            <div class="login-feature"><span class="login-feature-dot"></span>Document & payment records</div>
-          </div>
-        </div>
-        <div class="login-left-circles">
-          <div class="lc lc1"></div>
-          <div class="lc lc2"></div>
-          <div class="lc lc3"></div>
-        </div>
-      </div>
-
-      <!-- Right Panel -->
-      <div class="login-right">
-        <section class="login-card" aria-labelledby="loginTitle">
-          <p class="eyebrow">Welcome back</p>
-          <h2 id="loginTitle">Sign in to your account</h2>
-          <p class="muted" style="margin-bottom: 28px;">Enter your credentials to continue</p>
-          <div class="form-stack">
-            <label for="username">Username</label>
-            <input id="username" autocomplete="username" placeholder="admin" required>
-            <label for="password">Password</label>
-            <div class="password-wrap">
-              <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
-              <button type="button" class="toggle-pw" onclick="togglePassword()" aria-label="Show password">👁</button>
+            <!-- Left Panel -->
+            <div class="login-left">
+                <div class="login-left-content">
+                    <div class="login-brand-icon">🏗️</div>
+                    <h1 class="login-brand-title">Shraddha Construction</h1>
+                    <p class="login-brand-sub">Your complete project finance workspace — track income, expenses, payment
+                        modes, documents, and heads, all in one place.</p>
+                    <div class="login-features">
+                        <div class="login-feature"><span class="login-feature-dot"></span>Real-time expense tracking
+                        </div>
+                        <div class="login-feature"><span class="login-feature-dot"></span>Multi-site management</div>
+                        <div class="login-feature"><span class="login-feature-dot"></span>Document &amp; payment records
+                        </div>
+                    </div>
+                </div>
+                <div class="login-left-circles">
+                    <div class="lc lc1"></div>
+                    <div class="lc lc2"></div>
+                    <div class="lc lc3"></div>
+                </div>
             </div>
-            <p id="loginError" class="field-error" style="display:none;">Incorrect username or password.</p>
-            <button class="primary-btn login-btn" id="loginBtn" onclick="login()">Sign In</button>
-          </div>
+
+            <!-- Right Panel -->
+            <div class="login-right">
+                <section class="login-card" aria-labelledby="loginTitle">
+                    <p class="eyebrow">Welcome back</p>
+                    <h2 id="loginTitle">Sign in to your account</h2>
+                    <p class="muted" style="margin-bottom: 28px;">Enter your credentials to continue</p>
+                    <div class="form-stack">
+                        <label for="username">Username</label>
+                        <input id="username" autocomplete="username" placeholder="admin" required>
+                        <label for="password">Password</label>
+                        <div class="password-wrap">
+                            <input id="password" type="password" autocomplete="current-password" placeholder="••••••••"
+                                required>
+                            <button type="button" class="toggle-pw" onclick="togglePassword()"
+                                aria-label="Show password">👁</button>
+                        </div>
+                        <p id="loginError" class="field-error" style="display:none;">Incorrect username or password.</p>
+                        <button class="primary-btn login-btn" id="loginBtn" onclick="login()">Sign In</button>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- App Shell -->
+    <div id="app" class="app-shell hidden">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-icon">🏗️</span>
+                <div>
+                    <p class="eyebrow" style="color:rgba(255,255,255,0.55)">Finance Tracker</p>
+                    <h2 class="brand-name">Shraddha</h2>
+                </div>
+            </div>
+
+            <nav class="nav-stack" aria-label="Main navigation">
+                <button onclick="switchView('dashboard')" data-view-btn="dashboard" class="nav-btn active">
+                    <span class="nav-icon">📊</span> Dashboard
+                </button>
+                <button onclick="openCurrentWorkspace()" data-view-btn="workplace" id="workspaceNavBtn" class="nav-btn"
+                    disabled>
+                    <span class="nav-icon">🏢</span> Workspace
+                </button>
+                <button onclick="openMainHeads()" data-view-btn="mainHeadsView" class="nav-btn">
+                    <span class="nav-icon">🗂️</span> Main Heads
+                </button>
+                <button onclick="switchView('raBillsView')" data-view-btn="raBillsView" class="nav-btn">
+                    <span class="nav-icon">🧾</span> RA Bills
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar">G</div>
+                    <div>
+                        <strong id="userRole">BOSS</strong>
+                        <span class="muted-sm">Local storage</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Sign out</button>
+            </div>
+        </aside>
+
+        <!-- Mobile top bar -->
+        <div class="mobile-topbar">
+            <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+            <span class="mobile-title">Shraddha Construction</span>
+            <button class="ghost-btn sm" onclick="logout()">Out</button>
+        </div>
+
+        <section class="content">
+            <!-- #14: Hero banner with animated construction SVG blueprint pattern -->
+            <header class="hero">
+                <div class="hero-blueprint-pattern" aria-hidden="true"></div>
+                <div style="position:relative;z-index:1;">
+                    <p class="eyebrow">Finance Tracker</p>
+                    <h1 class="hero-title">Shraddha Construction</h1>
+                    <p id="currentDate" class="date-line"></p>
+                </div>
+                <button class="ghost-btn hero-logout" onclick="logout()" style="position:relative;z-index:1;">Sign
+                    out</button>
+            </header>
+
+            <!-- ── DASHBOARD ── -->
+            <section id="dashboard" class="view active">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">All Sites</p>
+                        <h2>Workplaces</h2>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <!-- #19: Export All Sites button (admin only, injected by JS via applyRoleUI) -->
+                        <div id="exportAllSitesRow"></div>
+                        <div class="inline-form" id="addWorkplaceRow">
+                            <input id="wpInput" placeholder="New workplace name"
+                                onkeydown="if(event.key==='Enter')addWP()">
+                            <button class="primary-btn" onclick="addWP()">+ Add Site</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="summaryCards" class="summary-grid"></div>
+
+                <!-- #13: Cross-site bar chart panel (shown/hidden via JS based on can("amounts")) -->
+                <div id="crossSiteChartPanel" class="panel" style="padding:18px;margin-bottom:14px;display:none;">
+                    <h3 style="margin:0 0 12px;font-size:16px;">Net Balance by Site</h3>
+                    <canvas id="crossSiteChart" style="max-height:220px;"></canvas>
+                </div>
+
+                <div id="wps" class="site-grid"></div>
+            </section>
+
+            <!-- ── WORKSPACE ── -->
+            <section id="workplace" class="view">
+                <div class="section-head">
+                    <div>
+                        <button class="text-btn" onclick="switchView('dashboard')">← Back to dashboard</button>
+                        <h2 id="title"></h2>
+                    </div>
+                    <div class="action-row">
+                        <button class="ghost-btn" onclick="toggleSearch()" id="searchToggleBtn">🔍 Search</button>
+                        <button class="ghost-btn" onclick="downloadWorkspaceExcel()" id="downloadBtn">⬇ Export
+                            Excel</button>
+                    </div>
+                </div>
+
+                <!-- Search Panel -->
+                <div id="searchPanel" class="panel filter-panel collapsed">
+                    <input id="search" placeholder="Search by head or note…">
+                    <input type="date" id="from" title="From date">
+                    <input type="date" id="to" title="To date">
+                    <select id="filterType">
+                        <option value="">All types</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                    <button class="ghost-btn" onclick="clearSearch()">Clear</button>
+                </div>
+
+                <!-- Add Record Toggle -->
+                <button id="recordToggleBtn" class="primary-btn record-toggle-btn" onclick="toggleRecordPanel()">
+                    + Add Record
+                </button>
+
+                <!-- Record Form -->
+                <div id="recordcard" class="panel record-grid">
+                    <div class="form-field">
+                        <label for="amt">Amount *</label>
+                        <input id="amt" type="number" min="0" step="0.01" placeholder="0.00" required>
+                        <span class="field-error" id="amtErr" style="display:none">Enter an amount</span>
+                    </div>
+                    <div class="form-field">
+                        <label for="date">Date *</label>
+                        <input id="date" type="date" required>
+                        <span class="field-error" id="dateErr" style="display:none">Pick a date</span>
+                    </div>
+                    <div class="form-field">
+                        <label for="head">Head *</label>
+                        <input id="head" placeholder="e.g. Labour, Material" required>
+                        <span class="field-error" id="headErr" style="display:none">Enter a head</span>
+                    </div>
+                    <div class="form-field">
+                        <label for="note">Note</label>
+                        <input id="note" placeholder="Optional description">
+                    </div>
+                    <div class="form-field">
+                        <label for="medium">Payment Mode</label>
+                        <select id="medium">
+                            <option value="Cash">Cash</option>
+                            <option value="Online">Online</option>
+                            <option value="Net Banking">Net Banking</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Card">Card</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="bank">Bank / Wallet</label>
+                        <select id="bank">
+                            <option value="cash">Cash</option>
+                            <option value="SBI">SBI</option>
+                            <option value="HDFC">HDFC</option>
+                            <option value="ICICI">ICICI</option>
+                            <option value="Axis">Axis</option>
+                            <option value="BOB">BOB</option>
+                            <option value="PNB">PNB</option>
+                            <option value="PhonePe">PhonePe</option>
+                            <option value="Google Pay">Google Pay</option>
+                            <option value="Paytm">Paytm</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="type">Type *</label>
+                        <select id="type">
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="photo">Attach Image</label>
+                        <!-- #24: file input for Supabase Storage upload -->
+                        <input type="file" id="photo" accept="image/*">
+                    </div>
+                    <button class="primary-btn record-submit" onclick="addRec()">Save Record</button>
+                    <button class="ghost-btn record-cancel" onclick="toggleRecordPanel()">Cancel</button>
+                </div>
+
+                <!-- Import Row -->
+                <div class="import-row">
+                    <label for="excelFile" class="file-label">📂</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="display:none">
+                    <span id="excelFileName" class="muted-sm">No file chosen</span>
+                    <button class="ghost-btn" onclick="importExcel()">Import</button>
+                </div>
+
+                <!-- Records Table + Chart -->
+                <div class="workspace-grid">
+                    <div class="panel table-panel">
+                        <div class="table-head">
+                            <div>
+                                <h3>Records</h3>
+                                <p id="recordCount" class="muted-sm"></p>
+                            </div>
+                            <div class="record-actions">
+                                <button type="button" class="ghost-btn" id="startEditBtn"
+                                    onclick="startRecordSelection('edit')">✏ Edit</button>
+                                <button type="button" class="danger-btn" id="startDeleteBtn"
+                                    onclick="startRecordSelection('delete')">🗑 Delete</button>
+                                <button type="button" class="primary-btn" id="confirmSelectionBtn"
+                                    onclick="confirmRecordSelection()" style="display:none;">Confirm</button>
+                                <button type="button" class="ghost-btn" id="cancelSelectionBtn"
+                                    onclick="cancelRecordSelection()" style="display:none;">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll">
+                            <!-- Desktop table (hidden on mobile ≤520px by CSS, replaced by cards) -->
+                            <table class="records-table" id="recsTable">
+                                <thead>
+                                    <tr>
+                                        <th class="select-col" id="selectColHeader" style="display:none;">
+                                            <input type="checkbox" id="selectAllRecords"
+                                                aria-label="Select all records">
+                                        </th>
+                                        <!-- #15: sortable column headers -->
+                                        <th class="col-date sortable-col" data-sort-col="date"
+                                            onclick="sortByCol('date')">Date <span class="sort-indicator"
+                                                id="sort-ind-date"></span></th>
+                                        <th class="col-head sortable-col" data-sort-col="head"
+                                            onclick="sortByCol('head')">Head <span class="sort-indicator"
+                                                id="sort-ind-head"></span></th>
+                                        <th class="col-note sortable-col" data-sort-col="note"
+                                            onclick="sortByCol('note')">Note <span class="sort-indicator"
+                                                id="sort-ind-note"></span></th>
+                                        <th class="col-amount sortable-col" data-sort-col="amount"
+                                            onclick="sortByCol('amount')">Amount <span class="sort-indicator"
+                                                id="sort-ind-amount"></span></th>
+                                        <th class="col-medium sortable-col" data-sort-col="medium"
+                                            onclick="sortByCol('medium')">Mode <span class="sort-indicator"
+                                                id="sort-ind-medium"></span></th>
+                                        <th class="col-bank sortable-col" data-sort-col="bank"
+                                            onclick="sortByCol('bank')">Bank <span class="sort-indicator"
+                                                id="sort-ind-bank"></span></th>
+                                        <th class="col-type sortable-col" data-sort-col="type"
+                                            onclick="sortByCol('type')">Type <span class="sort-indicator"
+                                                id="sort-ind-type"></span></th>
+                                        <th class="col-image">Doc</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recs"></tbody>
+                            </table>
+                        </div>
+                        <!-- #22: Mobile card container (shown at ≤520px) -->
+                        <div id="recsMobileCards" class="recs-mobile-cards"></div>
+                    </div>
+
+                    <aside id="graphSection" class="panel chart-panel">
+                        <h3>Income vs Expense</h3>
+                        <div id="chartEmpty" class="empty-state" style="display:none;">No data to chart yet.</div>
+                        <canvas id="pieChart"></canvas>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- ── MAIN HEADS ── -->
+            <section id="mainHeadsView" class="view">
+                <div class="section-head">
+                    <div>
+                        <button class="text-btn" onclick="switchView('dashboard')">← Back to dashboard</button>
+                        <h2>Main Heads</h2>
+                    </div>
+                </div>
+                <!-- #17: Summary row injected by JS -->
+                <div id="mainHeadsSummary" class="summary-grid" style="margin-bottom:14px;"></div>
+                <div id="mainHeads" class="site-grid"></div>
+            </section>
+
+            <!-- ── RA BILLS ── -->
+            <section id="raBillsView" class="view">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">Government Bills</p>
+                        <h2>RA Bills</h2>
+                    </div>
+                    <button class="primary-btn" onclick="toggleRAForm()">+ New RA Bill</button>
+                </div>
+
+                <!-- #16: RA Bills summary bar -->
+                <div id="raBillsSummaryBar" class="summary-grid" style="margin-bottom:14px;"></div>
+
+                <!-- RA Bill Form -->
+                <div id="raCard" class="panel ra-card" style="display:none;">
+                    <div class="ra-card-header">
+                        <span class="eyebrow">New RA Bill</span>
+                        <button class="text-btn" onclick="toggleRAForm()">✕ Close</button>
+                    </div>
+
+                    <div class="ra-form-grid">
+                        <!-- Site name -->
+                        <div class="form-field">
+                            <label for="raSite">Site Name *</label>
+                            <select id="raSite">
+                                <option value="">— Select site —</option>
+                            </select>
+                        </div>
+                        <!-- Bill date -->
+                        <div class="form-field">
+                            <label for="raDate">Bill Date *</label>
+                            <input type="date" id="raDate">
+                        </div>
+                        <!-- Bill number -->
+                        <div class="form-field">
+                            <label for="raBillNo">Bill No. / RA No.</label>
+                            <input id="raBillNo" placeholder="e.g. RA-2024-01">
+                        </div>
+                        <!-- Work description -->
+                        <div class="form-field">
+                            <label for="raWork">Work Description</label>
+                            <input id="raWork" placeholder="e.g. Foundation concreting">
+                        </div>
+                        <!-- Sanctioned amount -->
+                        <div class="form-field ra-full">
+                            <label for="raSanctioned">Amount Sanctioned by Government (₹) *</label>
+                            <input type="number" id="raSanctioned" min="0" step="0.01" placeholder="0.00"
+                                oninput="calcRA()">
+                        </div>
+                    </div>
+
+                    <!-- Live deduction breakdown -->
+                    <div class="ra-breakdown">
+                        <div class="ra-breakdown-title">Deduction Breakdown</div>
+                        <div class="ra-breakdown-grid">
+                            <div class="ra-deduct-row">
+                                <span>GST <span class="ra-rate">(1%)</span></span>
+                                <strong id="raGST">₹0</strong>
+                            </div>
+                            <div class="ra-deduct-row">
+                                <span>CGST <span class="ra-rate">(1%)</span></span>
+                                <strong id="raCGST">₹0</strong>
+                            </div>
+                            <div class="ra-deduct-row">
+                                <span>Income Tax <span class="ra-rate">(4%)</span></span>
+                                <strong id="raIT">₹0</strong>
+                            </div>
+                            <div class="ra-deduct-row ra-total-deduct">
+                                <span>Total Deductions</span>
+                                <strong id="raTotalDeduct">₹0</strong>
+                            </div>
+                            <div class="ra-deduct-row ra-net-row">
+                                <span>💰 Net Amount Receivable</span>
+                                <strong id="raNet">₹0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remark + Photo -->
+                    <div class="ra-form-grid" style="margin-top:16px;">
+                        <div class="form-field">
+                            <label for="raRemark">Remark / Notes</label>
+                            <input id="raRemark" placeholder="Any additional remarks (optional)">
+                        </div>
+                        <div class="form-field">
+                            <label>Attach Bill / Photo</label>
+                            <label for="raPhoto" class="ra-file-label" id="raFileLabel">
+                                <span id="raFileIcon">📎</span>
+                                <span id="raFileName">Click to attach image or PDF</span>
+                            </label>
+                            <input type="file" id="raPhoto" accept="image/*,application/pdf" style="display:none"
+                                onchange="handleRAPhoto(this)">
+                        </div>
+                    </div>
+
+                    <!-- Image preview -->
+                    <div id="raPhotoPreview" class="ra-photo-preview" style="display:none;">
+                        <img id="raPhotoImg" alt="Bill preview">
+                        <button class="ra-remove-photo" onclick="removeRAPhoto()" title="Remove photo">✕</button>
+                    </div>
+
+                    <div class="ra-form-actions">
+                        <button class="primary-btn" id="raSaveBtn" onclick="saveRABill()">💾 Save RA Bill</button>
+                        <button class="ghost-btn" onclick="toggleRAForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- RA Bills List -->
+                <div class="panel table-panel" id="raBillsTableWrap">
+                    <div class="table-head">
+                        <div>
+                            <h3>All RA Bills</h3>
+                            <p id="raBillCount" class="muted-sm"></p>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="records-table" id="raBillsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bill No.</th>
+                                    <th>Site</th>
+                                    <th>Work</th>
+                                    <th>Sanctioned</th>
+                                    <th>GST (1%)</th>
+                                    <th>CGST (1%)</th>
+                                    <th>IT (4%)</th>
+                                    <th>Net Receivable</th>
+                                    <th>Remark</th>
+                                    <!-- #18: Status column -->
+                                    <th>Status</th>
+                                    <th>Doc</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="raBillsBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="raBillsEmpty" class="empty-state" style="display:none;">
+                        <span class="empty-state-icon">🧾</span>
+                        No RA bills yet. Click <strong>+ New RA Bill</strong> to add one.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── HEAD RECORDS ── -->
+            <section id="headRecordsView" class="view">
+                <div class="section-head">
+                    <div>
+                        <button class="text-btn" onclick="openMainHeads()">← Back to heads</button>
+                        <h2 id="headTitle"></h2>
+                    </div>
+                </div>
+                <div class="panel table-panel">
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Workplace</th>
+                                    <th>Head</th>
+                                    <th>Note</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody id="headRecs"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </section>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- App Shell -->
-  <div id="app" class="app-shell hidden">
-
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-brand">
-        <span class="brand-icon">🏗️</span>
-        <div>
-          <p class="eyebrow" style="color:rgba(255,255,255,0.55)">Finance Tracker</p>
-          <h2 class="brand-name">Shraddha</h2>
-        </div>
-      </div>
-
-      <nav class="nav-stack" aria-label="Main navigation">
-        <button onclick="switchView('dashboard')" data-view-btn="dashboard" class="nav-btn active">
-          <span class="nav-icon">📊</span> Dashboard
-        </button>
-        <button onclick="openCurrentWorkspace()" data-view-btn="workplace" id="workspaceNavBtn" class="nav-btn" disabled>
-          <span class="nav-icon">🏢</span> Workspace
-        </button>
-        <button onclick="openMainHeads()" data-view-btn="mainHeadsView" class="nav-btn">
-          <span class="nav-icon">🗂️</span> Main Heads
-        </button>
-        <button onclick="switchView('raBillsView')" data-view-btn="raBillsView" class="nav-btn">
-          <span class="nav-icon">🧾</span> RA Bills
-        </button>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">G</div>
-          <div>
-            <strong id="userRole">BOSS</strong>
-            <span class="muted-sm">Local storage</span>
-          </div>
-        </div>
-        <button class="logout-btn" onclick="logout()">Sign out</button>
-      </div>
-    </aside>
-
-    <!-- Mobile top bar -->
-    <div class="mobile-topbar">
-      <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
-      <span class="mobile-title">Shraddha Construction</span>
-      <button class="ghost-btn sm" onclick="logout()">Out</button>
     </div>
 
-    <section class="content">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">Finance Tracker</p>
-          <h1 class="hero-title">Shraddha Construction</h1>
-          <p id="currentDate" class="date-line"></p>
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal hidden" onclick="closeImage()" role="dialog" aria-modal="true"
+        aria-label="Record image">
+        <div class="modal-inner">
+            <img id="modalImage" alt="Attached document">
+            <button class="modal-close" onclick="closeImage()" aria-label="Close image">✕</button>
         </div>
-        <button class="ghost-btn hero-logout" onclick="logout()">Sign out</button>
-      </header>
-
-      <!-- ── DASHBOARD ── -->
-      <section id="dashboard" class="view active">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">All Sites</p>
-            <h2>Workplaces</h2>
-          </div>
-          <div class="inline-form" id="addWorkplaceRow">
-            <input id="wpInput" placeholder="New workplace name" onkeydown="if(event.key==='Enter')addWP()">
-            <button class="primary-btn" onclick="addWP()">+ Add Site</button>
-          </div>
-        </div>
-        <div id="summaryCards" class="summary-grid"></div>
-        <div id="wps" class="site-grid"></div>
-      </section>
-
-      <!-- ── WORKSPACE ── -->
-      <section id="workplace" class="view">
-        <div class="section-head">
-          <div>
-            <button class="text-btn" onclick="switchView('dashboard')">← Back to dashboard</button>
-            <h2 id="title"></h2>
-          </div>
-          <div class="action-row">
-            <button class="ghost-btn" onclick="toggleSearch()" id="searchToggleBtn">🔍 Search</button>
-            <button class="ghost-btn" onclick="downloadWorkspaceExcel()" id="downloadBtn">⬇ Export Excel</button>
-          </div>
-        </div>
-
-        <!-- Search Panel -->
-        <div id="searchPanel" class="panel filter-panel collapsed">
-          <input id="search" placeholder="Search by head or note…">
-          <input type="date" id="from" title="From date">
-          <input type="date" id="to" title="To date">
-          <select id="filterType">
-            <option value="">All types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-          <button class="ghost-btn" onclick="clearSearch()">Clear</button>
-        </div>
-
-        <!-- Add Record Toggle -->
-        <button id="recordToggleBtn" class="primary-btn record-toggle-btn" onclick="toggleRecordPanel()">
-          + Add Record
-        </button>
-
-        <!-- Record Form -->
-        <div id="recordcard" class="panel record-grid">
-          <div class="form-field">
-            <label for="amt">Amount *</label>
-            <input id="amt" type="number" min="0" step="0.01" placeholder="0.00" required>
-            <span class="field-error" id="amtErr" style="display:none">Enter an amount</span>
-          </div>
-          <div class="form-field">
-            <label for="date">Date *</label>
-            <input id="date" type="date" required>
-            <span class="field-error" id="dateErr" style="display:none">Pick a date</span>
-          </div>
-          <div class="form-field">
-            <label for="head">Head *</label>
-            <input id="head" placeholder="e.g. Labour, Material" required>
-            <span class="field-error" id="headErr" style="display:none">Enter a head</span>
-          </div>
-          <div class="form-field">
-            <label for="note">Note</label>
-            <input id="note" placeholder="Optional description">
-          </div>
-          <div class="form-field">
-            <label for="medium">Payment Mode</label>
-            <select id="medium">
-              <option value="Cash">Cash</option>
-              <option value="Online">Online</option>
-              <option value="Net Banking">Net Banking</option>
-              <option value="UPI">UPI</option>
-              <option value="Cheque">Cheque</option>
-              <option value="Card">Card</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="bank">Bank / Wallet</label>
-            <select id="bank">
-              <option value="cash">Cash</option>
-              <option value="SBI">SBI</option>
-              <option value="HDFC">HDFC</option>
-              <option value="ICICI">ICICI</option>
-              <option value="Axis">Axis</option>
-              <option value="BOB">BOB</option>
-              <option value="PNB">PNB</option>
-              <option value="PhonePe">PhonePe</option>
-              <option value="Google Pay">Google Pay</option>
-              <option value="Paytm">Paytm</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="type">Type *</label>
-            <select id="type">
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="photo">Attach Image</label>
-            <input type="file" id="photo" accept="image/*">
-          </div>
-          <button class="primary-btn record-submit" onclick="addRec()">Save Record</button>
-          <button class="ghost-btn record-cancel" onclick="toggleRecordPanel()">Cancel</button>
-        </div>
-
-        <!-- Import Row -->
-        <div class="import-row">
-          <label for="excelFile" class="file-label">📂</label>
-          <input type="file" id="excelFile" accept=".xlsx,.xls" style="display:none">
-          <span id="excelFileName" class="muted-sm">No file chosen</span>
-          <button class="ghost-btn" onclick="importExcel()">Import</button>
-        </div>
-
-        <!-- Records Table + Chart -->
-        <div class="workspace-grid">
-          <div class="panel table-panel">
-            <div class="table-head">
-              <div>
-                <h3>Records</h3>
-                <p id="recordCount" class="muted-sm"></p>
-              </div>
-              <div class="record-actions">
-                <button type="button" class="ghost-btn" id="startEditBtn" onclick="startRecordSelection('edit')">✏ Edit</button>
-                <button type="button" class="danger-btn" id="startDeleteBtn" onclick="startRecordSelection('delete')">🗑 Delete</button>
-                <button type="button" class="primary-btn" id="confirmSelectionBtn" onclick="confirmRecordSelection()" style="display:none;">Confirm</button>
-                <button type="button" class="ghost-btn" id="cancelSelectionBtn" onclick="cancelRecordSelection()" style="display:none;">Cancel</button>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <table class="records-table">
-                <thead>
-                  <tr>
-                    <th class="select-col" id="selectColHeader" style="display:none;">
-                      <input type="checkbox" id="selectAllRecords" aria-label="Select all records">
-                    </th>
-                    <th class="col-date">Date</th>
-                    <th class="col-head">Head</th>
-                    <th class="col-note">Note</th>
-                    <th class="col-amount">Amount</th>
-                    <th class="col-medium">Mode</th>
-                    <th class="col-bank">Bank</th>
-                    <th class="col-type">Type</th>
-                    <th class="col-image">Doc</th>
-                  </tr>
-                </thead>
-                <tbody id="recs"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <aside id="graphSection" class="panel chart-panel">
-            <h3>Income vs Expense</h3>
-            <div id="chartEmpty" class="empty-state" style="display:none;">No data to chart yet.</div>
-            <canvas id="pieChart"></canvas>
-          </aside>
-        </div>
-      </section>
-
-      <!-- ── MAIN HEADS ── -->
-      <section id="mainHeadsView" class="view">
-        <div class="section-head">
-          <div>
-            <button class="text-btn" onclick="switchView('dashboard')">← Back to dashboard</button>
-            <h2>Main Heads</h2>
-          </div>
-        </div>
-        <div id="mainHeads" class="site-grid"></div>
-      </section>
-
-      <!-- ── RA BILLS ── -->
-      <section id="raBillsView" class="view">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Government Bills</p>
-            <h2>RA Bills</h2>
-          </div>
-          <button class="primary-btn" onclick="toggleRAForm()">+ New RA Bill</button>
-        </div>
-
-        <!-- RA Bill Form -->
-        <div id="raCard" class="panel ra-card" style="display:none;">
-          <div class="ra-card-header">
-            <span class="eyebrow">New RA Bill</span>
-            <button class="text-btn" onclick="toggleRAForm()">✕ Close</button>
-          </div>
-
-          <div class="ra-form-grid">
-            <!-- Site name -->
-            <div class="form-field">
-              <label for="raSite">Site Name *</label>
-              <select id="raSite">
-                <option value="">— Select site —</option>
-              </select>
-            </div>
-            <!-- Bill date -->
-            <div class="form-field">
-              <label for="raDate">Bill Date *</label>
-              <input type="date" id="raDate">
-            </div>
-            <!-- Bill number -->
-            <div class="form-field">
-              <label for="raBillNo">Bill No. / RA No.</label>
-              <input id="raBillNo" placeholder="e.g. RA-2024-01">
-            </div>
-            <!-- Work description -->
-            <div class="form-field">
-              <label for="raWork">Work Description</label>
-              <input id="raWork" placeholder="e.g. Foundation concreting">
-            </div>
-            <!-- Sanctioned amount -->
-            <div class="form-field ra-full">
-              <label for="raSanctioned">Amount Sanctioned by Government (₹) *</label>
-              <input type="number" id="raSanctioned" min="0" step="0.01" placeholder="0.00" oninput="calcRA()">
-            </div>
-          </div>
-
-          <!-- Live deduction breakdown -->
-          <div class="ra-breakdown">
-            <div class="ra-breakdown-title">Deduction Breakdown</div>
-            <div class="ra-breakdown-grid">
-              <div class="ra-deduct-row">
-                <span>GST <span class="ra-rate">(1%)</span></span>
-                <strong id="raGST">₹0</strong>
-              </div>
-              <div class="ra-deduct-row">
-                <span>CGST <span class="ra-rate">(1%)</span></span>
-                <strong id="raCGST">₹0</strong>
-              </div>
-              <div class="ra-deduct-row">
-                <span>Income Tax <span class="ra-rate">(4%)</span></span>
-                <strong id="raIT">₹0</strong>
-              </div>
-              <div class="ra-deduct-row ra-total-deduct">
-                <span>Total Deductions</span>
-                <strong id="raTotalDeduct">₹0</strong>
-              </div>
-              <div class="ra-deduct-row ra-net-row">
-                <span>💰 Net Amount Receivable</span>
-                <strong id="raNet">₹0</strong>
-              </div>
-            </div>
-          </div>
-
-          <!-- Remark + Photo -->
-          <div class="ra-form-grid" style="margin-top:16px;">
-            <div class="form-field">
-              <label for="raRemark">Remark / Notes</label>
-              <input id="raRemark" placeholder="Any additional remarks (optional)">
-            </div>
-            <div class="form-field">
-              <label>Attach Bill / Photo</label>
-              <label for="raPhoto" class="ra-file-label" id="raFileLabel">
-                <span id="raFileIcon">📎</span>
-                <span id="raFileName">Click to attach image or PDF</span>
-              </label>
-              <input type="file" id="raPhoto" accept="image/*,application/pdf" style="display:none" onchange="handleRAPhoto(this)">
-            </div>
-          </div>
-
-          <!-- Image preview -->
-          <div id="raPhotoPreview" class="ra-photo-preview" style="display:none;">
-            <img id="raPhotoImg" alt="Bill preview">
-            <button class="ra-remove-photo" onclick="removeRAPhoto()" title="Remove photo">✕</button>
-          </div>
-
-          <div class="ra-form-actions">
-            <button class="primary-btn" onclick="saveRABill()">💾 Save RA Bill</button>
-            <button class="ghost-btn" onclick="toggleRAForm()">Cancel</button>
-          </div>
-        </div>
-
-        <!-- RA Bills List -->
-        <div class="panel table-panel" id="raBillsTableWrap">
-          <div class="table-head">
-            <div>
-              <h3>All RA Bills</h3>
-              <p id="raBillCount" class="muted-sm"></p>
-            </div>
-          </div>
-          <div class="table-scroll">
-            <table class="records-table" id="raBillsTable">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Bill No.</th>
-                  <th>Site</th>
-                  <th>Work</th>
-                  <th>Sanctioned</th>
-                  <th>GST (1%)</th>
-                  <th>CGST (1%)</th>
-                  <th>IT (4%)</th>
-                  <th>Net Receivable</th>
-                  <th>Remark</th>
-                  <th>Doc</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="raBillsBody"></tbody>
-            </table>
-          </div>
-          <div id="raBillsEmpty" class="empty-state" style="display:none;">
-            <span class="empty-state-icon">🧾</span>
-            No RA bills yet. Click <strong>+ New RA Bill</strong> to add one.
-          </div>
-        </div>
-      </section>
-
-      <!-- ── HEAD RECORDS ── -->
-      <section id="headRecordsView" class="view">
-        <div class="section-head">
-          <div>
-            <button class="text-btn" onclick="openMainHeads()">← Back to heads</button>
-            <h2 id="headTitle"></h2>
-          </div>
-        </div>
-        <div class="panel table-panel">
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Workplace</th>
-                  <th>Head</th>
-                  <th>Note</th>
-                  <th>Amount</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody id="headRecs"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </section>
-  </div>
-
-  <!-- Image Modal -->
-  <div id="imageModal" class="image-modal hidden" onclick="closeImage()" role="dialog" aria-modal="true" aria-label="Record image">
-    <div class="modal-inner">
-      <img id="modalImage" alt="Attached document">
-      <button class="modal-close" onclick="closeImage()" aria-label="Close image">✕</button>
     </div>
-  </div>
 
-  <!-- Delete Confirm Modal -->
-  <div id="deleteModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-    <div class="confirm-card">
-      <h3 id="deleteModalTitle">Delete Records?</h3>
-      <p id="deleteModalMsg" class="muted">This action cannot be undone.</p>
-      <div class="confirm-actions">
-        <button class="ghost-btn" onclick="closeDeleteModal()">Cancel</button>
-        <button class="danger-btn" onclick="proceedDelete()">Yes, Delete</button>
-      </div>
+    <!-- Delete Confirm Modal -->
+    <div id="deleteModal" class="confirm-modal hidden" role="dialog" aria-modal="true"
+        aria-labelledby="deleteModalTitle">
+        <div class="confirm-card">
+            <h3 id="deleteModalTitle">Delete Records?</h3>
+            <p id="deleteModalMsg" class="muted">This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="ghost-btn" onclick="closeDeleteModal()">Cancel</button>
+                <button class="danger-btn" onclick="proceedDelete()">Yes, Delete</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Sidebar overlay for mobile -->
-  <div id="sidebarOverlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
+    <!-- Delete Site Confirm Modal -->
+    <div id="deleteSiteModal" class="confirm-modal hidden" role="dialog" aria-modal="true"
+        aria-labelledby="deleteSiteModalTitle">
+        <div class="confirm-card">
+            <h3 id="deleteSiteModalTitle">Delete Site?</h3>
+            <p id="deleteSiteModalMsg" class="muted">This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="ghost-btn" onclick="closeSiteDeleteModal()">Cancel</button>
+                <button class="danger-btn" onclick="proceedSiteDelete()">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="script.js"></script>
+    <!-- Sidebar overlay for mobile -->
+    <div id="sidebarOverlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- #25: Chart.js and XLSX with async defer -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" async defer></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
