@@ -628,6 +628,8 @@ function openWorkplace(id) {
     // Reset sort to date desc on new workspace open
     sortCol = "date";
     sortDir = "desc";
+    // Reset form panel state flag
+    _recordPanelOpen = false;
 
     document.getElementById("title").textContent = wp.name;
     document.getElementById("workspaceNavBtn").disabled = false;
@@ -647,21 +649,39 @@ function openCurrentWorkspace() {
 }
 
 // ─── RECORD FORM ──────────────────────────────────────
+// Use a simple boolean flag — never rely on getComputedStyle
+// because the CSS `#recordcard { display:none }` rule at ≤820px
+// makes computed style always "none" even when the form should open.
+let _recordPanelOpen = false;
+
 function toggleRecordPanel() {
     const card = document.getElementById("recordcard");
     const btn  = document.getElementById("recordToggleBtn");
-    const isOpen = card.classList.contains("show") || getComputedStyle(card).display !== "none";
 
-    if (isOpen) {
+    if (_recordPanelOpen) {
+        _recordPanelOpen = false;
         card.classList.remove("show");
         card.style.display = "none";
         btn.textContent = "+ Add Record";
     } else {
+        _recordPanelOpen = true;
         card.classList.add("show");
         card.style.display = "grid";
         btn.textContent = "✕ Close Form";
-        document.getElementById("amt").focus();
+        // Small delay so the grid renders before focusing (iOS keyboard)
+        setTimeout(() => {
+            document.getElementById("amt")?.focus();
+            card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 80);
     }
+}
+
+function closeRecordPanel() {
+    _recordPanelOpen = false;
+    const card = document.getElementById("recordcard");
+    const btn  = document.getElementById("recordToggleBtn");
+    if (card) { card.classList.remove("show"); card.style.display = "none"; }
+    if (btn)  btn.textContent = "+ Add Record";
 }
 
 // #24: Upload photo to Supabase Storage; fall back to base64 if bucket unavailable
@@ -706,6 +726,10 @@ async function addRec() {
     const wp = workplaces.find(w => w.id === currentWPId);
     if (!wp) return;
 
+    // Disable Save button to prevent double-tap on mobile
+    const saveBtn = document.querySelector("#recordcard .record-submit");
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = "Saving…"; }
+
     const photoFile = document.getElementById("photo").files[0];
 
     const saveRecord = async (photoData) => {
@@ -718,21 +742,26 @@ async function addRec() {
             medium: document.getElementById("medium").value,
             bank:   document.getElementById("bank").value,
             type:   document.getElementById("type").value,
-            // photoUrl = Storage URL (preferred); photo = base64 fallback for existing records
             photoUrl: (typeof photoData === "string" && !photoData.startsWith("data:")) ? photoData : null,
             photo:    (typeof photoData === "string" && photoData.startsWith("data:"))  ? photoData : null,
         });
         const ok = await dbUpsertWorkplace(wp);
-        if (!ok) { wp.records.pop(); return; }
+        if (!ok) {
+            wp.records.pop();
+            // Re-enable button on failure
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = "Save Record"; }
+            return;
+        }
         resetRecordForm();
         renderRecords();
         renderChart();
         renderDashboard();
         showToast("Record saved ✓", "success");
+        // Button is inside the now-closed form — re-enable for next open
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = "Save Record"; }
     };
 
     if (photoFile) {
-        // #24: Try Supabase Storage first, fall back to base64
         const publicUrl = await uploadRecordPhoto(photoFile);
         if (publicUrl) {
             await saveRecord(publicUrl);
@@ -766,6 +795,8 @@ function resetRecordForm() {
     document.getElementById("type").value   = "income";
     document.getElementById("photo").value  = "";
     ["amt", "date", "head"].forEach(id => showFieldError(id, id + "Err", false));
+    // Close the panel and reset flag so next tap re-opens cleanly
+    closeRecordPanel();
 }
 
 // ─── COLUMN SORTING (#15) ─────────────────────────────
@@ -1043,6 +1074,8 @@ async function editRecord(id) {
     wp.records = wp.records.filter(rec => rec.id !== id);
     await dbUpsertWorkplace(wp);
 
+    // Open the form with the flag so toggle works correctly afterward
+    _recordPanelOpen = true;
     const card = document.getElementById("recordcard");
     card.classList.add("show");
     card.style.display = "grid";
